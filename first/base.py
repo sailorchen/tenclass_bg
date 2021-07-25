@@ -4,16 +4,17 @@ class Base(object):
 
     #创建引流录播课
     def create_yinliu(self,token=None,env=None,shop=None,**kwargs):
+        '''
+        可变参数:course_name
+        '''
         url="{}/study-center/admin/api/v2/course".format(env)
+        course_name= '文学' if not kwargs.get("course_name") else kwargs.get("course_name")
         if 'stage' in env:
-            data = {"base":{"name":"文学","cover":"https://stage-1300403833.cos.ap-guangzhou.myqcloud.com/28271626486980349.jpg","course_way":"drainage","course_type":"ordinary","detail":{"days":10},"buy_notice_status":"off"},"payment":{"origin_price":10,"sale_price":0,"paid_type":1},"boot":{"boot_type":"personal","assigned":True,"assign_id":1257},"share":{"icon":"https://stage-1300403833.cos.ap-guangzhou.myqcloud.com/68561626487028126.jpg","description":"3454"}}
+            data = {"base":{"name":course_name,"cover":"https://stage-1300403833.cos.ap-guangzhou.myqcloud.com/28271626486980349.jpg","course_way":"drainage","course_type":"ordinary","detail":{"days":10},"buy_notice_status":"off"},"payment":{"origin_price":10,"sale_price":0,"paid_type":1},"boot":{"boot_type":"personal","assigned":True,"assign_id":1257},"share":{"icon":"https://stage-1300403833.cos.ap-guangzhou.myqcloud.com/68561626487028126.jpg","description":"3454"}}
         else:
-            data = {"base":{"name":"文学1","cover":"https://stage-1300403833.cos.ap-guangzhou.myqcloud.com/28271626486980349.jpg","course_way":"drainage","course_type":"ordinary","detail":{"days":10},"buy_notice_status":"off"},"payment":{"origin_price":10,"sale_price":0,"paid_type":1},"boot":{"boot_type":"personal","assigned":True,"assign_id":1257},"share":{"icon":"https://stage-1300403833.cos.ap-guangzhou.myqcloud.com/68561626487028126.jpg","description":"3454"}}
+            data = {"base":{"name":course_name,"cover":"https://stage-1300403833.cos.ap-guangzhou.myqcloud.com/28271626486980349.jpg","course_way":"drainage","course_type":"ordinary","detail":{"days":10},"buy_notice_status":"off"},"payment":{"origin_price":10,"sale_price":0,"paid_type":1},"boot":{"boot_type":"personal","assigned":True,"assign_id":1257},"share":{"icon":"https://stage-1300403833.cos.ap-guangzhou.myqcloud.com/68561626487028126.jpg","description":"3454"}}
         headers = {'x-shop-code':shop,'authorization':token,'content-type':'application/json'}
-        requests.post(url=url,json=data,headers=headers)
-        if kwargs:
-            for key,value in kwargs.items():
-                print(key,value)
+        course_id = requests.post(url=url,json=data,headers=headers)
         print('创建引流录播课')
 
     def create_camp(self,**kwargs):

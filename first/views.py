@@ -86,11 +86,12 @@ class Run_Script(APIView):
         body = json.loads(request.body)
         b=Base()
         src_name = body.get("src_name")
-        token = body.get("token")
-        env = body.get("env")
-        shop = body.get("shop_id")
-        methodcaller(src_name,token=token,env=env,shop=shop)(b)
-        return JsonResponse({'data': 200})
+        # token = body.get("token")
+        # env = body.get("env")
+        # shop = body.get("shop_id")
+        methodcaller(src_name, **body)(b)
+        # methodcaller(src_name,token=token,env=env,shop=shop)(b)
+        return JsonResponse({'code': 200,'msg':'运行成功','data':[]})
 
 
 class list_shop(APIView):
@@ -99,7 +100,7 @@ class list_shop(APIView):
     def get(self,request):
         try:
             env = request.GET.get("env")
-            envs=env_table.objects.filter(env=env).values('shop_id','shop_label').order_by('id')
+            envs=env_table.objects.filter(env=env).values('shop','shop_label').order_by('id')
             res = list(envs)
             return JsonResponse({"code": 200, "msg": "成功","data":res})
         except Exception as e:
@@ -111,7 +112,7 @@ class src_info(APIView):
     filter_fileds = ['page_name']
     def get(self,request):
         page_name = request.GET.get("page_name")
-        te = src_table.objects.filter(src_page='yinliu',is_delete=0).values('id','src_name','src_desc','src_label')
+        te = src_table.objects.filter(src_page=page_name,is_delete=0).values('id','src_name','src_desc','src_label')
         res = list(te)
         return JsonResponse({"code": 200, "msg": "成功","data":res})
 

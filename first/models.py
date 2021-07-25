@@ -21,7 +21,7 @@ class env_table(models.Model):
 
     env = models.CharField(max_length=20,verbose_name="环境")
     shop_label = models.CharField(max_length=20,verbose_name="店铺名称")
-    shop_id = models.CharField(max_length=20,verbose_name="店铺id")
+    shop = models.CharField(max_length=20,verbose_name="店铺id")
     req_url = models.CharField(max_length=50,verbose_name="请求域名")
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
