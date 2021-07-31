@@ -49,3 +49,30 @@ class src_table(models.Model):
     class Meta:
         verbose_name = "脚本对应关系表"
         verbose_name_plural = verbose_name
+
+class menu(models.Model):
+
+    menuName = models.CharField(max_length=50,verbose_name='菜单名')
+    is_delete = models.IntegerField(default=0,verbose_name="是否删除：0-未删 1-已删")
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+
+    class Meta:
+        verbose_name = "一级菜单表"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.menuName
+
+class submenu(models.Model):
+
+    menu = models.ForeignKey('menu',on_delete=models.CASCADE,verbose_name='父菜单id',related_name='submenu')
+    subName = models.CharField(max_length=50,verbose_name='子菜单名')
+    path = models.CharField(max_length=50, verbose_name='子页面路由')
+    is_delete = models.IntegerField(default=0,verbose_name="是否删除：0-未删 1-已删")
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+
+    class Meta:
+        verbose_name = "子菜单"
+        verbose_name_plural = verbose_name

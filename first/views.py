@@ -3,12 +3,11 @@ import datetime
 import jwt
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
-from .models import shop_user
 from django.http import JsonResponse
 import json
 import uuid
 from first.base import Base
-from first.models import env_table,src_table
+from first.models import env_table,src_table,menu,submenu,shop_user
 from django_filters.rest_framework import DjangoFilterBackend
 from operator import methodcaller
 
@@ -51,11 +50,14 @@ class MenuView(APIView):
         """
         通过APIView实现登录
         """
-        data = {"code":200,"msg":"获取菜单成功",'data':[
-            {'id':"114",'menuName':'用户管理','children':[{'id':55,'subName':'用户列表','path':'users'}]},
-            {'id':"115",'menuName':'课程管理','children':[{'id':35,'subName':'引流课','path':'roles'},{'id':56,'subName':'交付课','path':'permissions'}]}
-        ]}
-        return JsonResponse(data)
+        data= []
+        b=menu.objects.filter(is_delete=0).values('id','menuName')
+        for c in list(b):
+            id = c.get("id")
+            s=submenu.objects.filter(is_delete=0,menu=id).values('id','subName','path')
+            c['children'] = list(s)
+            data.append(c)
+        return JsonResponse({"code":200,"msg":"获取菜单成功",'data':data})
 
 class MyLimitOffsetPagination(LimitOffsetPagination):
     #默认显示的个数
