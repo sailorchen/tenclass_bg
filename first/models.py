@@ -7,10 +7,13 @@ from django.db import models
 class shop_user(models.Model):
 
     username = models.CharField(max_length=20,verbose_name="用户名")
+    fullname = models.CharField(max_length=60,verbose_name="姓名")
     password = models.CharField(max_length=20,verbose_name="密码")
+    mobile = models.CharField(max_length=20,verbose_name="手机号",default='1')
+    email = models.CharField(max_length=20,verbose_name="邮箱",default='2')
+    status = models.IntegerField(verbose_name="状态:1正常 0不正常",default=1)
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    fullname = models.CharField(max_length=64, null=True, verbose_name='中文名')
 
     class Meta:
         verbose_name = "用户表"

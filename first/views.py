@@ -1,7 +1,7 @@
 import datetime
 
 import jwt
-from django.shortcuts import render
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from .models import shop_user
 from django.http import JsonResponse
@@ -13,6 +13,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from operator import methodcaller
 
 # Create your views here.
+from .seris import PagerSerialiser
+
+
 def get_jwt_token(user_name, role_data='default', JWT_SECRET_KEY=None):
     """
     生成jwt-token
@@ -54,21 +57,38 @@ class MenuView(APIView):
         ]}
         return JsonResponse(data)
 
+class MyLimitOffsetPagination(LimitOffsetPagination):
+    #默认显示的个数
+    default_limit = 10
+    #当前的位置
+    offset_query_param = "offset"
+    #通过limit改变默认显示的个数
+    limit_query_param = "limit"
+    #一页最多显示的个数
+    max_limit = 100
+
 #   用户信息api
 class UserList(APIView):
-    def get(self, request, format=None):
+    filter_backends = [DjangoFilterBackend]
+    filter_fileds = ['fullname']
+    def get(self, request,*args,**kwargs):
         """
         通过APIView实现登录
         """
-        data = {"code":200,"msg":"获取列表成功",'data':[
-            {'id':"114",'username':'刘德华','mobile':'135353553','email':'253252@q','address':'哈哈哈','status':True},
-            {'id':"115",'username':'刘德华1','mobile':'135353553','email':'253252@q','address':'哈哈哈','status':True},
-            {'id': "116", 'username': '刘德华2', 'mobile': '135353553', 'email': '253252@q', 'address': '哈哈哈',
-             'status': True},
-            {'id': "117", 'username': '刘德华3', 'mobile': '135353553', 'email': '253252@q', 'address': '哈哈哈',
-             'status': True},
-        ]}
-        return JsonResponse(data)
+        #获取所有数据
+        fullname = request.GET.get("fullname")
+        if fullname:
+            roles = shop_user.objects.filter(fullname=fullname)
+        else:
+            roles = shop_user.objects.all()
+        #创建分页对象
+        pg = MyLimitOffsetPagination()
+        #获取分页的数据
+        page_roles = pg.paginate_queryset(queryset=roles,request=request,view=self)
+        #对数据进行序列化
+        ser = PagerSerialiser(instance=page_roles,many=True)
+        return pg.get_paginated_response(ser.data)
+
 
 class Run_Script(APIView):
 
@@ -86,11 +106,7 @@ class Run_Script(APIView):
         body = json.loads(request.body)
         b=Base()
         src_name = body.get("src_name")
-        # token = body.get("token")
-        # env = body.get("env")
-        # shop = body.get("shop_id")
         methodcaller(src_name, **body)(b)
-        # methodcaller(src_name,token=token,env=env,shop=shop)(b)
         return JsonResponse({'code': 200,'msg':'运行成功','data':[]})
 
 

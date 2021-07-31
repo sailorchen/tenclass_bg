@@ -12,7 +12,7 @@ class env_admin(admin.ModelAdmin):
 
 @admin.register(shop_user)
 class env_admin(admin.ModelAdmin):
-    list_display = ('id','username','password')
+    list_display = ('id','username','password','fullname','mobile','email','status')
 
 
 # admin.site.register(env_table)

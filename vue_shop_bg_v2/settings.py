@@ -112,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-#添加试图过滤器
+#添加视图过滤器
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': {
         'django-filters.rest_framework.DjangoFilterBackend',
