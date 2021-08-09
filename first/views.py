@@ -12,6 +12,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from operator import methodcaller
 
 # Create your views here.
+from vue_shop_bg_v2 import settings
 from .seris import PagerSerialiser
 
 
@@ -108,8 +109,8 @@ class Run_Script(APIView):
         body = json.loads(request.body)
         b=Base()
         src_name = body.get("src_name")
-        methodcaller(src_name, **body)(b)
-        return JsonResponse({'code': 200,'msg':'运行成功','data':[]})
+        c = methodcaller(src_name, **body)(b)
+        return JsonResponse(json_dumps_params={'ensure_ascii':False},data={'code': 200,'msg':c,'data':[]})
 
 
 class list_shop(APIView):
@@ -133,4 +134,6 @@ class src_info(APIView):
         te = src_table.objects.filter(src_page=page_name,is_delete=0).values('id','src_name','src_desc','src_label')
         res = list(te)
         return JsonResponse({"code": 200, "msg": "成功","data":res})
+
+
 

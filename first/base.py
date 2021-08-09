@@ -15,7 +15,8 @@ class Base(object):
             data = {"base":{"name":course_name,"cover":"https://stage-1300403833.cos.ap-guangzhou.myqcloud.com/28271626486980349.jpg","course_way":"drainage","course_type":"ordinary","detail":{"days":10},"buy_notice_status":"off"},"payment":{"origin_price":10,"sale_price":0,"paid_type":1},"boot":{"boot_type":"personal","assigned":True,"assign_id":1257},"share":{"icon":"https://stage-1300403833.cos.ap-guangzhou.myqcloud.com/68561626487028126.jpg","description":"3454"}}
         headers = {'x-shop-code':shop,'authorization':token,'content-type':'application/json'}
         course_id = requests.post(url=url,json=data,headers=headers)
-        print('创建引流录播课')
+        msg = "创建引流录播课成功"
+        return msg
 
     def create_camp(self,**kwargs):
         if kwargs:

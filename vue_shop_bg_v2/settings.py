@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,8 +25,9 @@ SECRET_KEY = 'ag-vx9ccm!n@0nb7zfvoifl*=&8f4(m2hvsqnm_w%xw7g%@34b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+LOGFILE = 'test.txt'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
@@ -55,6 +57,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'vue_shop_bg_v2.urls'
 CORS_ORIGIN_ALLOW_ALL = True
+WEBSOCKET_ACCEPT_ALL=True
 
 TEMPLATES = [
     {
