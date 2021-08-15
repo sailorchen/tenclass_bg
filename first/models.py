@@ -19,6 +19,19 @@ class shop_user(models.Model):
         verbose_name = "用户表"
         verbose_name_plural = verbose_name
 
+class Usertoken(models.Model):
+
+    user = models.OneToOneField(shop_user,on_delete=models.CASCADE)
+    token = models.CharField(max_length=512)
+
+    class Meta:
+        verbose_name = "授权表"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.token
+
+
 
 class env_table(models.Model):
 

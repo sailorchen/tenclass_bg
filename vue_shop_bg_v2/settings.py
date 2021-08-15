@@ -58,6 +58,18 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'vue_shop_bg_v2.urls'
 CORS_ORIGIN_ALLOW_ALL = True
 WEBSOCKET_ACCEPT_ALL=True
+CORS_ALLOW_METHODS = ('DELETE',
+                      'GET',
+                      'POST',
+                      'PUT',
+                      'VIEW',
+                      'PATCH',
+                      'OPTIONS')
+CORS_ALLOW_HEADERS = (
+    'token',
+    'x-csrftoken',
+    'content-type',
+)
 
 TEMPLATES = [
     {
@@ -119,7 +131,8 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': {
         'django-filters.rest_framework.DjangoFilterBackend',
-    }
+    },
+    'DEFAULT_AUTHENTICATION_CLASSES':['first.authtoken.AuthenticationSelf'],
 }
 
 

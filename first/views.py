@@ -5,34 +5,29 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from django.http import JsonResponse
 import json
-import uuid
 from first.base import Base
 from first.models import env_table,src_table,menu,submenu,shop_user
 from django_filters.rest_framework import DjangoFilterBackend
 from operator import methodcaller
-
+import time
 # Create your views here.
-from vue_shop_bg_v2 import settings
-from .seris import PagerSerialiser
+from first.seris import PagerSerialiser
 
-
-def get_jwt_token(user_name, role_data='default', JWT_SECRET_KEY=None):
-    """
-    生成jwt-token
-    :param unit_name:
-    :param role_data:
-    :return:
-    """
-    payload = {
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=3600),  # 单位秒
-        'iat': datetime.datetime.utcnow(),
-        'data': {'username': user_name, 'role_data': role_data}
-    }
-    encoded_jwt = jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
-    return str(encoded_jwt, encoding='utf8')
+#引入token
+from first.authtoken import AuthenticationSelf
+from first.models import Usertoken
 
 # 登录api
 class LoginView(APIView):
+    authentication_classes = []
+    #解析jwt-token
+    # def test(self,token):
+    #     try:
+    #         data = jwt.decode(token,'chenhu0905',algorithms=['HS256'])
+    #     except Exception as e:
+    #         print(e)
+    #     print(data)
+
     def post(self, request, format=None):
         """
         通过APIView实现登录
@@ -40,8 +35,15 @@ class LoginView(APIView):
         data = json.loads(request.body)
         username = data.get("username")
         password = data.get("password")
-        if shop_user.objects.filter(username=username,password=password):
-            return JsonResponse({"code":200,'msg':"登录成功","token":uuid.uuid4()})
+        user_id = shop_user.objects.filter(username=username, password=password, status=1).values('id')
+        if user_id:
+            id = user_id[0]
+            token_dict = {'iat':time.time()}
+            token_dict.update(id)
+            headers = {'alg':'HS256'}
+            jwt_token = jwt.encode(token_dict,'chenhu0905',algorithm='HS256',headers=headers).decode('ascii')
+            Usertoken.objects.update_or_create(user=shop_user(id['id']), defaults={'token': jwt_token})
+            return JsonResponse({"code":200,'msg':"登录成功","token":jwt_token,'user_id':id['id']})
         return JsonResponse({"code":400,"msg":"用户不存在"})
 
 
@@ -97,13 +99,14 @@ class Run_Script(APIView):
 
     # filter_backends = [DjangoFilterBackend]
     # filter_fileds = ['page_name','src_name']
-
+    authentication_classes = [AuthenticationSelf,]
     def get(self,request,format=None):
         page_name = request.GET.get("page_name")
         src_name = request.GET.get("src_name")
         b=Base()
         methodcaller(src_name)(b)
         return JsonResponse({'data':200})
+
 
     def post(self,request,format=None,**kwargs):
         body = json.loads(request.body)
@@ -134,6 +137,3 @@ class src_info(APIView):
         te = src_table.objects.filter(src_page=page_name,is_delete=0).values('id','src_name','src_desc','src_label')
         res = list(te)
         return JsonResponse({"code": 200, "msg": "成功","data":res})
-
-
-
